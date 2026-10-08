@@ -90,10 +90,13 @@ A recipe is data — the shortcut, before it is built:
 
 Two variables may appear in any string: `$input` — whatever the shortcut was
 run with — and `$previous`, the output of the step before. `$$` is a dollar
-sign. The encoding of `$previous` is not guessed: after its first
-command-line run, Shortcuts appended a step of its own to a shortcut this
-library built, referring to the step before — and the variable it wrote is
-byte for byte what the encoder produces. That value is a test.
+sign. Neither encoding is guessed. After its first command-line run,
+Shortcuts appended a step of its own to a shortcut this library built,
+referring to the step before — and the variable it wrote is byte for byte
+what the encoder produces for `$previous`; that value is a test. Then a built
+recipe using both was added and run: `"You said: $input"` followed by
+`"$previous (twice)"`, given "hi there", printed `You said: hi there (twice)`
+— from an argument, from stdin, from a file, and with an emoji in it.
 
 ## Things that cost an afternoon
 

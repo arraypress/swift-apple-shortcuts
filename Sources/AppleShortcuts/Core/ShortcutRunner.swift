@@ -28,7 +28,9 @@ public enum ShortcutRunner {
     /// - Parameters:
     ///   - shortcut: A name or identifier.
     ///   - input: Bytes to hand the shortcut, written to a temporary file for
-    ///     the run and deleted after.
+    ///     the run and deleted after. Measured: a shortcut reading `$input`
+    ///     got the file's TEXT, not its name — "hi there" in, "You said: hi
+    ///     there" out — so text input needs no conversion.
     ///   - inputFile: A file to hand it instead.
     ///   - outputType: A UTI to ask for the output as — `public.plain-text`.
     ///   - patience: Seconds before `onWaiting` is called.

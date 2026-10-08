@@ -14,8 +14,11 @@ import Foundation
 /// The shape was checked against Shortcuts itself, not a write-up of it: a
 /// file built this way, signed and opened, was added to a real library and
 /// stored with its action exactly as written — identifier, parameters and
-/// step UUID — and running it printed what the recipe said. That file used
-/// no variables; how `$input` and `$previous` are stored is in ``Tokens``.
+/// step UUID — and running it printed what the recipe said. A second, using
+/// `$input` and `$previous`, was added and run the same way:
+/// `shortcut run "Echo Probe" "hi there"` printed `You said: hi there
+/// (twice)` — text input reached `$input`, and the second step read the
+/// first's output.
 enum RecipeEncoding {
 
     /// What encoding needs to know about each action, from the catalogue.

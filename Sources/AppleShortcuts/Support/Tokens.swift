@@ -17,6 +17,10 @@ import Foundation
 /// in for each variable, and the variables listed by the UTF-16 range they
 /// occupy. In any other parameter — content, a file, a placemark — a variable
 /// that is the whole value is an attachment.
+///
+/// Both checked against Shortcuts: the token string for `$previous` is byte
+/// for byte what Shortcuts itself wrote into a step it added, and a built
+/// shortcut using `$input` then `$previous` ran and printed what it should.
 enum Tokens {
 
     /// A piece of a written string.

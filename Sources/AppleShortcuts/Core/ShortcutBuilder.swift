@@ -84,6 +84,13 @@ public struct ShortcutBuilder {
         return signed
     }
 
+    /// The file name a recipe's shortcut is written under — and so, since
+    /// Shortcuts names an added shortcut after its file, the name it will run
+    /// by.
+    public static func fileName(for name: String) -> String {
+        FileNaming.fileName(for: name)
+    }
+
     /// Signs a shortcut file with `shortcuts sign`.
     ///
     /// Shortcuts opens only signed files. The output is an Apple Encrypted

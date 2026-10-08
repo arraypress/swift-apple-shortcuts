@@ -47,10 +47,19 @@ enum CatalogQueries {
                    or lower(coalesce(l.descriptionSummary, '')) like ?3 or lower(coalesce(cl.name, '')) like ?3)
               and (?4 = '' or lower(c.id) = lower(?4) or lower(coalesce(cl.name, '')) = lower(?4))
             group by t.rowId
-            order by case when lower(l.name) = ?2 then 0 when lower(l.name) like ?3 then 1 else 2 end, l.name
+            order by case
+                when lower(l.name) = ?2 then 0
+                when lower(l.name) like ?6 or lower(l.name) like ?7 then 1
+                when lower(l.name) like ?3 then 2
+                else 3 end,
+              length(l.name), l.name
             limit ?5
             """
-        return (sql, [.text(locale), .text(wanted), .text(like), .text(app ?? ""), .integer(Int64(limit))])
+        // A whole word beats letters inside one: asked for "focus", Set Focus
+        // must come before Add OmniFocus Item — measured, it did not appear
+        // in the first five until this was added.
+        return (sql, [.text(locale), .text(wanted), .text(like), .text(app ?? ""), .integer(Int64(limit)),
+                      .text("\(wanted)%"), .text("% \(wanted)%")])
     }
 
     /// One action by identifier.
