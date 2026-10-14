@@ -31,7 +31,7 @@ and this is a way to shortcuts.
 
 ## What it does
 
-| | |
+| Call | What it does |
 |---|---|
 | `ShortcutLibrary.shortcuts(in:)` | every shortcut, with its folder |
 | `ShortcutLibrary.folders()` | every folder |
