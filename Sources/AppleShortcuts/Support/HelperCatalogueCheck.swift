@@ -70,6 +70,9 @@ enum HelperCatalogueCheck {
                 problems.append("\(at): it replaces \"\(old)\", which is a current helper's name")
             }
             if !helper.experimental { problems += HelperLint.problems(of: helper).map { "\(at): \($0)" } }
+            if HelperCatalogueCheck.findsByFilter(helper), !helper.input.contains(where: { $0.name == "check" && $0.type == .bool }) {
+                problems.append("\(at): acts on items a filter finds, so it needs a \"check\" mode that only finds (MEASURED: Find Notes ignored its filter and acted on every note)")
+            }
             if helper.output.type != .none, helper.steps.last?.action != "is.workflow.actions.output" {
                 problems.append("\(at): a helper that answers ends with Stop and Output (\"Do Nothing\"), so nothing is shown")
             }
@@ -78,6 +81,11 @@ enum HelperCatalogueCheck {
             }
         }
         return problems
+    }
+
+    /// Whether any step finds items with a content filter.
+    static func findsByFilter(_ helper: Helper) -> Bool {
+        helper.steps.contains { $0.parameters["WFContentItemFilter"] != nil }
     }
 
     /// Problems Shortcuts' own catalogue finds in each helper's steps: an

@@ -97,6 +97,25 @@ public extension Helper {
     }
 }
 
+public extension Helper {
+
+    /// For a helper that acts on items a filter finds: runs it with
+    /// `check: true`, which only finds, and hands back what the filter matched,
+    /// one per line. A caller acts only when that is exactly its one target —
+    /// MEASURED, Find Notes once ignored its filter and the action hit every note.
+    func check(_ input: [String: PlistValue], host: any HelperHost = LiveHelperHost(),
+               onWaiting: (@Sendable () -> Void)? = nil) throws -> [String] {
+        var asked = input
+        asked["check"] = .bool(true)
+        let output = try run(asked, host: host, onWaiting: onWaiting).output
+        return String(decoding: output, as: UTF8.self).split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+    }
+
+    /// Whether the helper finds by a filter, and so must be checked before it acts.
+    var findsByFilter: Bool { HelperCatalogueCheck.findsByFilter(self) }
+}
+
 public extension HelperCatalogue {
 
     /// One helper by id.

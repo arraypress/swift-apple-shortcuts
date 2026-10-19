@@ -134,6 +134,21 @@ final class HelperLintTests: XCTestCase {
         XCTAssertTrue(HelperCatalogueCheck.problems(HelperCatalogue(helpers: [answer])).contains { $0.contains("ends with Stop and Output") })
     }
 
+    func testAHelperThatActsOnFoundItemsMustHaveACheckMode() throws {
+        let filter = PlistValue.dictionary(["Value": .dictionary([:]), "WFSerializationType": .string("WFContentPredicateTableTemplate")])
+        let unsafe = Helper(id: "notes.pin", tool: "notes", title: "Pin", description: "d", version: 1, icon: HelperIcon(glyph: 61465, color: "yellow"),
+                            input: [HelperField(name: "title", type: .string, description: "")],
+                            steps: [RecipeStep(action: "is.workflow.actions.filter.notes", parameters: ["WFContentItemFilter": filter])])
+        XCTAssertTrue(unsafe.findsByFilter)
+        XCTAssertTrue(HelperCatalogueCheck.problems(HelperCatalogue(helpers: [unsafe])).contains { $0.contains("\"check\" mode") })
+        let agenda = try XCTUnwrap(HelperCatalogue.builtIn().helper("agenda.set-tags"))
+        XCTAssertTrue(agenda.findsByFilter)
+        let host = FakeHost([InstalledShortcut(id: "A", name: agenda.name, marker: agenda.marker, noInputBehavior: HelperLint.stopsOnNoInput)])
+        host.output = Data("Buy milk\n\n".utf8)
+        XCTAssertEqual(try agenda.check(["title": .string("Buy milk"), "tags": .array([])], host: host), ["Buy milk"])
+        XCTAssertEqual(host.runs.first?.input.flatMap { String(data: $0, encoding: .utf8) }, #"{"check":true,"tags":[],"title":"Buy milk"}"#)
+    }
+
     func testTheLibraryScanLintsOnlyHelpers() throws {
         // A non-helper with the same broken If is someone's own shortcut: not linted.
         let steps = [set("v"), ifStep(4, on: "v", text: "x")]
