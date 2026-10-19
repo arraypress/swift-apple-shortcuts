@@ -129,7 +129,7 @@ public final class ActionCatalog {
         return CatalogAction(
             id: action.id, name: action.name, summary: action.summary, app: action.app,
             appName: action.appName, kind: action.kind, outputName: action.outputName,
-            parameters: parameters
+            parameters: parameters, mac: action.mac
         )
     }
 }

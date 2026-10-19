@@ -30,9 +30,18 @@ public struct Recipe: Sendable, Equatable, Codable {
     /// The steps, in order.
     public let actions: [RecipeStep]
 
+    /// Its icon; `nil` is Shortcuts' default, a red tile.
+    public let icon: RecipeIcon?
+
+    /// When set, a run with no input stops with this message instead of
+    /// asking for input (`WFWorkflowNoInputBehaviorShowError`).
+    public let noInputError: String?
+
     /// A recipe from its parts.
-    public init(name: String, actions: [RecipeStep]) {
+    public init(name: String, actions: [RecipeStep], icon: RecipeIcon? = nil, noInputError: String? = nil) {
         self.name = name
         self.actions = actions
+        self.icon = icon
+        self.noInputError = noInputError
     }
 }

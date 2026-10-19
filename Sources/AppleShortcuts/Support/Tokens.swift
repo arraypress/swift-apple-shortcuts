@@ -9,7 +9,10 @@
 
 import Foundation
 
-/// The variables a recipe can use, and their encoding in a shortcut file.
+/// The variables a recipe can use, and their encoding in a shortcut file:
+/// `$input`, `$previous`, and `${name}` for a variable a Set Variable step
+/// named — the same `{"Type": "Variable", "VariableName": name}` agenda's
+/// tag helper wrote by hand, and Shortcuts ran.
 ///
 /// Shortcuts stores a variable two ways, and which one depends on where it
 /// goes. In a TEXT parameter — the catalogue types `string` and
@@ -31,6 +34,8 @@ enum Tokens {
         case input
         /// The output of the step before.
         case previous
+        /// A named variable, set earlier by Set Variable: `${name}`.
+        case variable(String)
     }
 
     /// The object-replacement character Shortcuts puts where a variable sits.
@@ -64,6 +69,12 @@ enum Tokens {
                 flush()
                 segments.append(.previous)
                 rest = rest.dropFirst(9)
+            } else if rest.hasPrefix("${"), let close = rest.firstIndex(of: "}"),
+                      case let name = rest[rest.index(rest.startIndex, offsetBy: 2)..<close],
+                      !name.isEmpty, name.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "_" }) {
+                flush()
+                segments.append(.variable(String(name)))
+                rest = rest[rest.index(after: close)...]
             } else {
                 text.append(first)
                 rest = rest.dropFirst()
@@ -96,6 +107,8 @@ enum Tokens {
         case .previous:
             guard let previous else { return ["Type": "ExtensionInput"] }
             return ["Type": "ActionOutput", "OutputUUID": previous.uuid, "OutputName": previous.name]
+        case .variable(let name):
+            return ["Type": "Variable", "VariableName": name]
         case .text:
             return [:]
         }

@@ -1,0 +1,124 @@
+{
+  "id": "mac.alarm-add",
+  "tool": "mac",
+  "title": "Add Alarm",
+  "description": "Adds a Clock alarm at a time, with a label and the days it repeats.",
+  "version": 2,
+  "icon": {
+    "glyph": 59649,
+    "color": "teal"
+  },
+  "input": [
+    {
+      "name": "time",
+      "type": "string",
+      "description": "HH:mm"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "the alarm's name"
+    },
+    {
+      "name": "repeats",
+      "type": "list",
+      "description": "days: monday … sunday; empty: once",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "mac reads Clock's own store back"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "alInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "time",
+        "WFInput": "${alInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "alTime",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "label",
+        "WFInput": "${alInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "alLabel",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "repeats",
+        "WFInput": "${alInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "alRepeats",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.detect.date",
+      "parameters": {
+        "WFInput": "${alTime}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "alDate",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "com.apple.mobiletimer-framework.MobileTimerIntents.MTCreateAlarmIntent",
+      "parameters": {
+        "dateComponents": "${alDate}",
+        "name": "${alLabel}",
+        "repeats": "${alRepeats}",
+        "allowsSnooze": true,
+        "OpenWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "MEASURED: given the time as text, Add Alarm made the alarm for now; the text goes through Get Dates from Input first."
+  ],
+  "replaces": [],
+  "install": "mac doctor --install"
+}

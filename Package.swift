@@ -13,10 +13,27 @@ let package = Package(
     ],
     products: [
         .library(name: "AppleShortcuts", targets: ["AppleShortcuts"]),
+        // The fleet's shared helper verbs: `<tool> doctor` and the exit codes
+        // for helper refusals, written once instead of once per tool.
+        .library(name: "AppleShortcutsCLI", targets: ["AppleShortcutsCLI"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/arraypress/swift-cli-kit.git", from: "0.20.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
     ],
     targets: [
         .target(name: "AppleShortcuts"),
+        .target(name: "AppleShortcutsCLI", dependencies: [
+            "AppleShortcuts",
+            .product(name: "CLIKit", package: "swift-cli-kit"),
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]),
         .testTarget(name: "AppleShortcutsTests", dependencies: ["AppleShortcuts"]),
+        .testTarget(name: "AppleShortcutsCLITests", dependencies: [
+            "AppleShortcutsCLI", "AppleShortcuts",
+            .product(name: "CLIKit", package: "swift-cli-kit"),
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]),
     ]
 )
 

@@ -111,6 +111,39 @@ public struct ShortcutLibrary: Sendable {
         }
     }
 
+    // MARK: - Helpers
+
+    /// Every shortcut with its helper marker (when it carries one), run count
+    /// and last run — in one read of the library's database.
+    ///
+    /// The run count and date are Shortcuts' own (`ZRUNEVENTSCOUNT`,
+    /// `ZLASTRUNEVENTDATE`), which count runs from the command line too.
+    public func installed() throws -> [InstalledShortcut] {
+        let database = try SQLiteDatabase(path: databasePath)
+        var found: [InstalledShortcut] = []
+        try database.query("""
+            select s.ZWORKFLOWID, s.ZNAME, s.ZRUNEVENTSCOUNT, s.ZLASTRUNEVENTDATE, s.ZMODIFICATIONDATE,
+                   (select a.ZDATA from ZSHORTCUTACTIONS a where a.ZSHORTCUT = s.Z_PK limit 1), s.ZNOINPUTBEHAVIORDATA
+            from ZSHORTCUT s
+            where coalesce(s.ZTOMBSTONED, 0) = 0 and s.ZWORKFLOWID is not null
+            order by s.ZNAME
+            """) { row in
+            let steps = row.data(5).flatMap { try? StepDecoding.steps(from: $0) } ?? []
+            let marker = HelperMarking.marker(in: steps)
+            found.append(InstalledShortcut(
+                id: row.text(0) ?? "",
+                name: row.text(1) ?? "",
+                marker: marker,
+                runCount: Int(row.integer(2)),
+                lastRun: row.double(3).map(Date.init(timeIntervalSinceReferenceDate:)),
+                modified: row.double(4).map(Date.init(timeIntervalSinceReferenceDate:)),
+                problems: marker == nil ? [] : HelperLint.problems(steps),
+                noInputBehavior: row.data(6).flatMap(HelperLint.noInputBehaviorName)
+            ))
+        }
+        return found
+    }
+
     // MARK: - Internals
 
     /// One run of `shortcuts list`.

@@ -1,0 +1,611 @@
+{
+  "id": "settings.system",
+  "tool": "settings",
+  "title": "Set System Setting",
+  "description": "Sets Night Shift, True Tone, Bluetooth, AirDrop, appearance or brightness, whichever key the input names.",
+  "version": 2,
+  "icon": {
+    "glyph": 61736,
+    "color": "blue"
+  },
+  "input": [
+    {
+      "name": "night-shift-on",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "night-shift-off",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "true-tone-on",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "true-tone-off",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "bluetooth-on",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "bluetooth-off",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "airdrop-off",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "airdrop-contacts",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "airdrop-everyone",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "appearance-light",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "appearance-dark",
+      "type": "bool",
+      "description": "true sets it",
+      "required": false
+    },
+    {
+      "name": "brightness",
+      "type": "number",
+      "description": "0 to 1",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "settings reads each back from the OS"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "night-shift-on",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysNightShiftOn",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "night-shift-off",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysNightShiftOff",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "true-tone-on",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysTrueToneOn",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "true-tone-off",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysTrueToneOff",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "bluetooth-on",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysBluetoothOn",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "bluetooth-off",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysBluetoothOff",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "airdrop-off",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysAirdropOff",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "airdrop-contacts",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysAirdropContacts",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "airdrop-everyone",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysAirdropEveryone",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "appearance-light",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysAppearanceLight",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "appearance-dark",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysAppearanceDark",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "brightness",
+        "WFInput": "${sysInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "sysBrightness",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "FFA39CF1-F994-5A39-973D-B033D7502DE1",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysNightShiftOn}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.nightshift.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": true,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "FFA39CF1-F994-5A39-973D-B033D7502DE1",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "BB941BA8-AE70-5AC5-A0EE-2D67AD9043DD",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysNightShiftOff}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.nightshift.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": false,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "BB941BA8-AE70-5AC5-A0EE-2D67AD9043DD",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "480F4D4B-BA28-537A-9781-2156F5EA714D",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysTrueToneOn}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.truetone.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": true,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "480F4D4B-BA28-537A-9781-2156F5EA714D",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "9410AF21-3706-5D76-B41F-2542F7BE2EAB",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysTrueToneOff}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.truetone.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": false,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "9410AF21-3706-5D76-B41F-2542F7BE2EAB",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7B7E9661-4D24-562C-9194-0738C60E9AD5",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysBluetoothOn}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.bluetooth.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": true,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7B7E9661-4D24-562C-9194-0738C60E9AD5",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "272A10F8-B8CB-580A-8B6C-62F7FED12B37",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysBluetoothOff}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.bluetooth.set",
+      "parameters": {
+        "operation": "set",
+        "OnValue": false,
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "272A10F8-B8CB-580A-8B6C-62F7FED12B37",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "9A666605-E5BB-506F-8344-C88448630745",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysAirdropOff}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setairdropreceiving",
+      "parameters": {
+        "WFAirDropState": "Off"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "9A666605-E5BB-506F-8344-C88448630745",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "1F7F0BA9-87B5-517D-9FC8-EE283B8EC542",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysAirdropContacts}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setairdropreceiving",
+      "parameters": {
+        "WFAirDropState": "Contacts Only"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "1F7F0BA9-87B5-517D-9FC8-EE283B8EC542",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7A892392-53F3-5990-B104-F9BCABA65A85",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysAirdropEveryone}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setairdropreceiving",
+      "parameters": {
+        "WFAirDropState": "Everyone"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7A892392-53F3-5990-B104-F9BCABA65A85",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "76ECD5DF-2F57-5A58-950F-417254852143",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysAppearanceLight}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.appearance",
+      "parameters": {
+        "operation": "set",
+        "style": "light",
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "76ECD5DF-2F57-5A58-950F-417254852143",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "8718E0C6-1590-5426-A3FF-F9C67B77AF6E",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysAppearanceDark}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.appearance",
+      "parameters": {
+        "operation": "set",
+        "style": "dark",
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "8718E0C6-1590-5426-A3FF-F9C67B77AF6E",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "2E483316-32FD-5248-BC02-CE46173A942D",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${sysBrightness}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setbrightness",
+      "parameters": {
+        "WFBrightness": "${sysBrightness}",
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "2E483316-32FD-5248-BC02-CE46173A942D",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "Give one key. Each If tests only whether its key is there; its action has a fixed value.",
+    "No Low Power Mode: Shortcuts' Set Low Power Mode does not run on a Mac (settings hands back a pmset line).",
+    "Set Appearance has no 'automatic'."
+  ],
+  "replaces": [],
+  "install": "settings doctor --install"
+}

@@ -1,0 +1,130 @@
+{
+  "id": "rec.voice-memo",
+  "tool": "rec",
+  "title": "Voice Memo",
+  "description": "Starts or stops a Voice Memos recording.",
+  "version": 3,
+  "icon": {
+    "glyph": 61586,
+    "color": "orange"
+  },
+  "input": [
+    {
+      "name": "start",
+      "type": "string",
+      "description": "start a recording with this name",
+      "required": false
+    },
+    {
+      "name": "stop",
+      "type": "bool",
+      "description": "true stops the recording",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "rec reads Voice Memos' own database back"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "vmInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "start",
+        "WFInput": "${vmInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "vmStart",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "stop",
+        "WFInput": "${vmInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "vmStop",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "940FA888-AC52-5C0F-AA1A-158E5A65B6CF",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${vmStart}"
+        }
+      }
+    },
+    {
+      "action": "com.apple.VoiceMemos.RecordVoiceMemoIntent",
+      "parameters": {
+        "name": "${vmStart}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "940FA888-AC52-5C0F-AA1A-158E5A65B6CF",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "E529688E-D681-5C5C-8FAE-CB6C0C29C013",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${vmStop}"
+        }
+      }
+    },
+    {
+      "action": "com.apple.VoiceMemos.StopRecording",
+      "parameters": {}
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "E529688E-D681-5C5C-8FAE-CB6C0C29C013",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "No delete: a Find-by-name filter was ignored at run time in Notes (it acted on every note), so no helper deletes by name until that is measured safe here."
+  ],
+  "replaces": [],
+  "install": "rec doctor --install"
+}

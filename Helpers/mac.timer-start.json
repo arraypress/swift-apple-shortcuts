@@ -1,0 +1,74 @@
+{
+  "id": "mac.timer-start",
+  "tool": "mac",
+  "title": "Start Timer",
+  "description": "Starts a Clock timer for a number of minutes.",
+  "version": 1,
+  "icon": {
+    "glyph": 61512,
+    "color": "teal"
+  },
+  "input": [
+    {
+      "name": "minutes",
+      "type": "number",
+      "description": "how long"
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "mac reads Clock's own store back"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "tmInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "minutes",
+        "WFInput": "${tmInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "tmMinutes",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.timer.start",
+      "parameters": {
+        "WFDuration": {
+          "Value": {
+            "Magnitude": "${tmMinutes}",
+            "Unit": "min"
+          },
+          "WFSerializationType": "WFQuantityFieldValue"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "Start Timer takes no label on the Mac.",
+    "EXPERIMENTAL: the editor showed its minutes as Unknown Variable; the lint marks it BROKEN and nothing runs it."
+  ],
+  "replaces": [],
+  "install": "mac doctor --install",
+  "experimental": true
+}

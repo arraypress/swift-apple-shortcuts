@@ -42,6 +42,9 @@ and this is a way to shortcuts.
 | `ActionCatalog.action(id:)` | one action in full |
 | `ShortcutBuilder.write(_:to:)` | a recipe, checked, as a signed `.shortcut` file |
 | `ShortcutBuilder.offer(_:)` | open it in Shortcuts for a person to add |
+| `HelperCatalogue.builtIn()` | the fleet's helper shortcuts, one JSON file each |
+| `Helper.status()` / `.offer()` / `.run(_:)` | is it installed and current; offer it; run it headless with JSON in |
+| `HelperCatalogue.census()` / `.stale(for:)` | every helper's state; old ones to delete |
 
 ## Adding a shortcut takes a person — by design
 
@@ -98,6 +101,38 @@ recipe using both was added and run: `"You said: $input"` followed by
 `"$previous (twice)"`, given "hi there", printed `You said: hi there (twice)`
 — from an argument, from stdin, from a file, and with an emoji in it.
 
+## Helpers
+
+A fleet tool that needs a Shortcuts-only action ships a **helper**: one JSON
+file in `Helpers/`, compiled in by `python3 Scripts/gen-helpers.py` (a test
+fails if the two disagree). Adding a helper is adding a file.
+
+```json
+{"id": "settings.focus", "tool": "settings", "title": "Set Focus",
+ "description": "Turns a Focus on or off.", "version": 1,
+ "icon": {"glyph": 61440, "color": "grey"},
+ "input": [{"name": "on", "type": "bool", "description": "on or off"}],
+ "output": {"type": "text", "description": "the Focus now"},
+ "steps": [{"action": "is.workflow.actions.dnd.set", "parameters": {"Enabled": "$input"}}],
+ "notes": [], "replaces": [], "install": "settings doctor --install"}
+```
+
+Every file is read strictly (an unknown key anywhere refuses it) and checked
+on load: unique ids named `<tool>.<what>`, a one-line description, a version,
+the fleet's one colour (grey), a glyph seen in a real shortcut, and steps the
+Mac's action catalogue knows (a test). In the library each helper is
+`<tool> · <title>` on a grey tile, and its first step is a comment —
+the description, "Installed by settings — don't edit; reinstall with
+`settings doctor --install`", and `[helper id=settings.focus version=1
+recipe=3f9a1c2e]`. That marker, not the name, says what a shortcut is, so
+`status` tells current from outdated, edited (`changed`), a copy under
+another name (`misnamed`), two that answer to one name (`duplicated`) and a
+hand-made one with the name (`unmarked`). `run` checks the input against the
+fields and refuses anything not current before it runs; it returns the
+output and nothing more — the caller reads back the state it changed.
+`shortcut helpers` reports every helper at once. Version 0 with a `name` is
+for a helper from before markers (agenda's "agenda set tags").
+
 ## Things that cost an afternoon
 
 Each was measured, on macOS 27, and each is a rule in the code.
@@ -143,7 +178,7 @@ fails as `notPermitted` rather than as a missing file.
 ## Installation
 
 ```swift
-.package(url: "https://github.com/arraypress/swift-apple-shortcuts.git", from: "0.1.0")
+.package(url: "https://github.com/arraypress/swift-apple-shortcuts.git", from: "0.2.0")
 ```
 
 ## Licence

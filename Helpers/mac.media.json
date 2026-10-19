@@ -1,0 +1,221 @@
+{
+  "id": "mac.media",
+  "tool": "mac",
+  "title": "Media",
+  "description": "Plays or pauses what is playing, or plays the most recent audiobook.",
+  "version": 2,
+  "icon": {
+    "glyph": 59508,
+    "color": "teal"
+  },
+  "input": [
+    {
+      "name": "play-pause",
+      "type": "bool",
+      "description": "true does it",
+      "required": false
+    },
+    {
+      "name": "play",
+      "type": "bool",
+      "description": "true does it",
+      "required": false
+    },
+    {
+      "name": "pause",
+      "type": "bool",
+      "description": "true does it",
+      "required": false
+    },
+    {
+      "name": "audiobook",
+      "type": "bool",
+      "description": "true does it",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "none"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "mdInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "play-pause",
+        "WFInput": "${mdInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "mdPlayPause",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "play",
+        "WFInput": "${mdInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "mdPlay",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "pause",
+        "WFInput": "${mdInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "mdPause",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "audiobook",
+        "WFInput": "${mdInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "mdAudiobook",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7611C5F2-ADD7-5E1A-92F5-AE77774D17B5",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${mdPlayPause}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.pausemusic",
+      "parameters": {
+        "WFPlayPauseBehavior": "Play/Pause"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "7611C5F2-ADD7-5E1A-92F5-AE77774D17B5",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "747977CB-AAA4-5A89-B9F2-0489436FB3CE",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${mdPlay}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.pausemusic",
+      "parameters": {
+        "WFPlayPauseBehavior": "Play"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "747977CB-AAA4-5A89-B9F2-0489436FB3CE",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "429CA596-E937-5237-AA84-19FC86331E56",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${mdPause}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.pausemusic",
+      "parameters": {
+        "WFPlayPauseBehavior": "Pause"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "429CA596-E937-5237-AA84-19FC86331E56",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "011EB2EB-82E5-5C3F-864B-23110C6A4713",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${mdAudiobook}"
+        }
+      }
+    },
+    {
+      "action": "com.apple.iBooksX.PlayAudiobookIntent",
+      "parameters": {
+        "mode": "mostRecent"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "011EB2EB-82E5-5C3F-864B-23110C6A4713",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [],
+  "replaces": [],
+  "install": "mac doctor --install"
+}

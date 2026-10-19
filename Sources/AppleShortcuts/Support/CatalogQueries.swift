@@ -20,7 +20,7 @@ enum CatalogQueries {
 
     /// The columns every action query selects, in ``action(from:)``'s order.
     static let actionColumns = """
-        t.id, l.name, l.descriptionSummary, c.id, cl.name, t.toolType, l.outputResultName
+        t.id, l.name, l.descriptionSummary, c.id, cl.name, t.toolType, l.outputResultName, t.visibilityFlags, t.requirements
         """
 
     /// The joins every action query uses: an action, its app, and both their
@@ -110,7 +110,8 @@ enum CatalogQueries {
             app: row.text(3) ?? "",
             appName: row.text(4),
             kind: row.text(5) ?? "",
-            outputName: row.text(6).flatMap { $0.isEmpty ? nil : $0 }
+            outputName: row.text(6).flatMap { $0.isEmpty ? nil : $0 },
+            mac: PlatformRequirements.availability(visibility: Int(row.integer(7)), requirements: row.data(8) ?? Data())
         )
     }
 }

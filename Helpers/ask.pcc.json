@@ -1,0 +1,133 @@
+{
+  "id": "ask.pcc",
+  "tool": "ask",
+  "title": "Private Cloud Compute",
+  "description": "Answers a prompt with Use Model on Private Cloud Compute and hands back the text.",
+  "version": 2,
+  "icon": {
+    "glyph": 61533,
+    "color": "purple"
+  },
+  "input": [
+    {
+      "name": "prompt",
+      "type": "string",
+      "description": "the question"
+    },
+    {
+      "name": "narrow",
+      "type": "bool",
+      "description": "true turns Broad World Knowledge off",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "text",
+    "description": "the model's answer"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "prompt",
+        "WFInput": "${askInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askPrompt",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "narrow",
+        "WFInput": "${askInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askNarrow",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "421CE39A-6A4E-58D8-A712-0D5AD8A64503",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${askNarrow}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.askllm",
+      "parameters": {
+        "WFLLMModel": "Apple Intelligence",
+        "WFLLMPrompt": "${askPrompt}",
+        "WFGenerativeResultType": "Text",
+        "WFAllowWebSearch": false,
+        "FollowUp": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "421CE39A-6A4E-58D8-A712-0D5AD8A64503",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "action": "is.workflow.actions.askllm",
+      "parameters": {
+        "WFLLMModel": "Apple Intelligence",
+        "WFLLMPrompt": "${askPrompt}",
+        "WFGenerativeResultType": "Text",
+        "WFAllowWebSearch": true,
+        "FollowUp": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "421CE39A-6A4E-58D8-A712-0D5AD8A64503",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.output",
+      "parameters": {
+        "WFOutput": "$previous",
+        "WFNoOutputSurfaceBehavior": "Do Nothing"
+      }
+    }
+  ],
+  "notes": [
+    "Needs Apple Intelligence on. Runs on Apple's Private Cloud Compute servers (the editor's \"Cloud\" model); Apple says requests are not stored.",
+    "Follow Up is always off: on, Use Model opens a chat window and waits."
+  ],
+  "replaces": [],
+  "install": "ask doctor --install",
+  "timeout": 120
+}

@@ -1,0 +1,95 @@
+{
+  "id": "whatsapp.send",
+  "tool": "whatsapp",
+  "title": "Send Message",
+  "description": "Sends a WhatsApp message with Shortcuts' Send Message action, without opening a window.",
+  "version": 1,
+  "icon": {
+    "glyph": 59414,
+    "color": "green"
+  },
+  "input": [
+    {
+      "name": "to",
+      "type": "string",
+      "description": "the recipient's phone number, international format"
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "description": "the message"
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "whatsapp reads the new outgoing row back from ChatStorage.sqlite"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "waInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "to",
+        "WFInput": "${waInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "waTo",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "text",
+        "WFInput": "${waInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "waText",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.sendmessage",
+      "parameters": {
+        "IntentAppDefinition": {
+          "BundleIdentifier": "net.whatsapp.WhatsApp",
+          "Name": "WhatsApp",
+          "TeamIdentifier": "57T9237FN3"
+        },
+        "WFSendMessageActionRecipients": "${waTo}",
+        "WFSendMessageContent": "${waText}",
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "The app definition is copied from a Send Message shortcut made in this Mac's editor with WhatsApp chosen.",
+    "WhatsApp may need Siri access (System Settings > Siri) before Shortcuts can send through it."
+  ],
+  "replaces": [],
+  "install": "whatsapp doctor --install",
+  "timeout": 45
+}

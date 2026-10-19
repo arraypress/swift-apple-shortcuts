@@ -88,6 +88,12 @@ final class SQLiteDatabase {
         /// An integer column.
         func integer(_ index: Int32) -> Int64 { sqlite3_column_int64(statement, index) }
 
+        /// A real column, or `nil` for NULL — Core Data keeps dates this way,
+        /// as seconds since 2001.
+        func double(_ index: Int32) -> Double? {
+            sqlite3_column_type(statement, index) == SQLITE_NULL ? nil : sqlite3_column_double(statement, index)
+        }
+
         /// A text column, or `nil` for NULL.
         func text(_ index: Int32) -> String? {
             guard let bytes = sqlite3_column_text(statement, index) else { return nil }

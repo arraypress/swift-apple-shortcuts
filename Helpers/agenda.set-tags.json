@@ -1,0 +1,238 @@
+{
+  "id": "agenda.set-tags",
+  "tool": "agenda",
+  "title": "Set Tags",
+  "description": "Sets a reminder's whole tag list, finding the reminder by its exact title.",
+  "version": 2,
+  "icon": {
+    "glyph": 59423,
+    "color": "red"
+  },
+  "input": [
+    {
+      "name": "title",
+      "type": "string",
+      "description": "the reminder's title; agenda refuses a title two reminders share"
+    },
+    {
+      "name": "tags",
+      "type": "list",
+      "description": "every tag the reminder ends with, without #"
+    },
+    {
+      "name": "check",
+      "type": "bool",
+      "required": false,
+      "description": "true only finds: hands back the titles the filter matches, and changes nothing"
+    }
+  ],
+  "output": {
+    "type": "text",
+    "description": "with check: the titles found, one per line; otherwise nothing — agenda reads the tags back from the Reminders store"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "agendaInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "tags",
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "agendaInput"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "agendaTags",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "title",
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "agendaInput"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "agendaTitle",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "check",
+        "WFInput": "${agendaInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "agendaCheck",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "11150725-8900-55DE-BBC0-ED14F06D8F8E",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${agendaCheck}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.filter.reminders",
+      "parameters": {
+        "WFContentItemFilter": {
+          "Value": {
+            "WFActionParameterFilterPrefix": 1,
+            "WFContentPredicateBoundedDate": false,
+            "WFActionParameterFilterTemplates": [
+              {
+                "Operator": 4,
+                "Property": "Title",
+                "Removable": true,
+                "Values": {
+                  "Unit": 4,
+                  "String": {
+                    "Value": {
+                      "string": "￼",
+                      "attachmentsByRange": {
+                        "{0, 1}": {
+                          "Type": "Variable",
+                          "VariableName": "agendaTitle"
+                        }
+                      }
+                    },
+                    "WFSerializationType": "WFTextTokenString"
+                  }
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFContentPredicateTableTemplate"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.detect.text",
+      "parameters": {
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.output",
+      "parameters": {
+        "WFOutput": "$previous",
+        "WFNoOutputSurfaceBehavior": "Do Nothing"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "11150725-8900-55DE-BBC0-ED14F06D8F8E",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.filter.reminders",
+      "parameters": {
+        "WFContentItemFilter": {
+          "Value": {
+            "WFActionParameterFilterPrefix": 1,
+            "WFContentPredicateBoundedDate": false,
+            "WFActionParameterFilterTemplates": [
+              {
+                "Operator": 4,
+                "Property": "Title",
+                "Removable": true,
+                "Values": {
+                  "Unit": 4,
+                  "String": {
+                    "Value": {
+                      "string": "￼",
+                      "attachmentsByRange": {
+                        "{0, 1}": {
+                          "Type": "Variable",
+                          "VariableName": "agendaTitle"
+                        }
+                      }
+                    },
+                    "WFSerializationType": "WFTextTokenString"
+                  }
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFContentPredicateTableTemplate"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.setters.reminders",
+      "parameters": {
+        "WFInput": "$previous",
+        "WFContentItemPropertyName": "Tags",
+        "Mode": "Set",
+        "WFReminderContentItemTags": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "agendaTags"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.output",
+      "parameters": {
+        "WFOutput": "",
+        "WFNoOutputSurfaceBehavior": "Do Nothing"
+      }
+    }
+  ],
+  "notes": [
+    "Uses Edit Reminder in Set mode only: on the Mac its Add mode replaces every tag, and Reminders' Add or Remove Tags intent is refused at import.",
+    "agenda finds the reminder by its exact title and refuses a title two reminders share.",
+    "Found-by-filter: agenda runs it with check first and acts only when the filter finds exactly the one reminder."
+  ],
+  "replaces": [
+    "agenda add tags",
+    "agenda remove tags",
+    "agenda set tags"
+  ],
+  "install": "agenda tag --install --yes"
+}

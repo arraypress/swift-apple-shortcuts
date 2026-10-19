@@ -1,0 +1,64 @@
+{
+  "id": "browse.reading-add",
+  "tool": "browse",
+  "title": "Add to Reading List",
+  "description": "Adds a web page to Safari's Reading List.",
+  "version": 1,
+  "icon": {
+    "glyph": 59460,
+    "color": "light-blue"
+  },
+  "input": [
+    {
+      "name": "url",
+      "type": "string",
+      "description": "the page's address"
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "browse reads Safari's Bookmarks.plist back"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "rlInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "url",
+        "WFInput": "${rlInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "rlUrl",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.readinglist",
+      "parameters": {
+        "WFURL": "${rlUrl}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [],
+  "replaces": [],
+  "install": "browse doctor --install"
+}

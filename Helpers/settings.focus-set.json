@@ -1,0 +1,40 @@
+{
+  "id": "settings.focus-set",
+  "tool": "settings",
+  "title": "Set Focus",
+  "description": "Turns a Focus on or off by name, on until turned off or until a time.",
+  "version": 1,
+  "icon": {"glyph": 59418, "color": "blue"},
+  "input": [
+    {"name": "focus", "type": "string", "description": "the Focus's name as Shortcuts shows it, e.g. Do Not Disturb"},
+    {"name": "on", "type": "bool", "description": "true turns it on, false off"},
+    {"name": "until", "type": "string", "required": false, "description": "when it turns itself off, as a local date and time (yyyy-MM-dd HH:mm); absent: until turned off"}
+  ],
+  "output": {"type": "none", "description": "settings reads the Focus back with Get Focus"},
+  "steps": [
+    {"action": "is.workflow.actions.detect.dictionary", "parameters": {"WFInput": "$input"}},
+    {"action": "is.workflow.actions.setvariable", "parameters": {"WFVariableName": "settingsInput", "WFInput": "$previous"}},
+    {"action": "is.workflow.actions.getvalueforkey", "parameters": {"WFGetDictionaryValueType": "Value", "WFDictionaryKey": "focus", "WFInput": "${settingsInput}"}},
+    {"action": "is.workflow.actions.setvariable", "parameters": {"WFVariableName": "focusName", "WFInput": "$previous"}},
+    {"action": "is.workflow.actions.getvalueforkey", "parameters": {"WFGetDictionaryValueType": "Value", "WFDictionaryKey": "on", "WFInput": "${settingsInput}"}},
+    {"action": "is.workflow.actions.setvariable", "parameters": {"WFVariableName": "focusOn", "WFInput": "$previous"}},
+    {"action": "is.workflow.actions.getvalueforkey", "parameters": {"WFGetDictionaryValueType": "Value", "WFDictionaryKey": "until", "WFInput": "${settingsInput}"}},
+    {"action": "is.workflow.actions.setvariable", "parameters": {"WFVariableName": "focusUntil", "WFInput": "$previous"}},
+    {"action": "is.workflow.actions.conditional", "parameters": {"GroupingIdentifier": "5E771B6F-0C3A-4F4B-9A1D-F0C05E7F0001", "WFControlFlowMode": 0,
+      "WFCondition": 100, "WFInput": {"Type": "Variable", "Variable": "${focusUntil}"}}},
+    {"action": "is.workflow.actions.dnd.set", "parameters": {"Operation": "Turn", "Enabled": "${focusOn}", "FocusModes": "${focusName}",
+      "AssertionType": "Time", "Time": "${focusUntil}"}},
+    {"action": "is.workflow.actions.conditional", "parameters": {"GroupingIdentifier": "5E771B6F-0C3A-4F4B-9A1D-F0C05E7F0001", "WFControlFlowMode": 1}},
+    {"action": "is.workflow.actions.dnd.set", "parameters": {"Operation": "Turn", "Enabled": "${focusOn}", "FocusModes": "${focusName}",
+      "AssertionType": "Turned Off"}},
+    {"action": "is.workflow.actions.conditional", "parameters": {"GroupingIdentifier": "5E771B6F-0C3A-4F4B-9A1D-F0C05E7F0001", "WFControlFlowMode": 2}},
+    {"action": "is.workflow.actions.nothing"}
+  ],
+  "notes": [
+    "The Focus is chosen by name from a variable; a name Shortcuts cannot match fails the run.",
+    "Only one Focus is on at a time: turning one on turns off the one before."
+  ],
+  "replaces": [],
+  "install": "settings doctor --install",
+  "timeout": 30
+}

@@ -41,6 +41,9 @@ public struct CatalogAction: Sendable, Equatable, Codable {
     /// What it takes.
     public let parameters: [CatalogParameter]
 
+    /// Whether a shortcut on this Mac can use it.
+    public let mac: MacAvailability
+
     /// An action from its parts. ``ActionCatalog`` reads real ones.
     public init(
         id: String,
@@ -50,7 +53,8 @@ public struct CatalogAction: Sendable, Equatable, Codable {
         appName: String? = nil,
         kind: String,
         outputName: String? = nil,
-        parameters: [CatalogParameter] = []
+        parameters: [CatalogParameter] = [],
+        mac: MacAvailability = .runs
     ) {
         self.id = id
         self.name = name
@@ -60,5 +64,6 @@ public struct CatalogAction: Sendable, Equatable, Codable {
         self.kind = kind
         self.outputName = outputName
         self.parameters = parameters
+        self.mac = mac
     }
 }

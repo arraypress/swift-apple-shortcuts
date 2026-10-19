@@ -61,15 +61,15 @@ enum RecipeEncoding {
             let id = uuid()
             var parameters: [String: Any] = ["UUID": id]
             for (key, value) in step.parameters {
+                if usesInputAnywhere(value) { usesInput = true }
                 if case .string(let string) = value {
-                    if Tokens.segments(string).contains(.input) { usesInput = true }
                     parameters[key] = Tokens.encode(
                         string,
                         isTextParameter: context.isTextParameter(step.action, key),
                         previous: previous
                     )
                 } else {
-                    parameters[key] = PlistValueCoding.object(value)
+                    parameters[key] = nested(value, previous: previous)
                 }
             }
             actions.append([
@@ -79,13 +79,13 @@ enum RecipeEncoding {
             previous = (id, context.outputName(step.action) ?? "Result")
         }
 
-        return [
+        var workflow: [String: Any] = [
             "WFWorkflowClientVersion": "2700.0.0",
             "WFWorkflowMinimumClientVersion": 900,
             "WFWorkflowMinimumClientVersionString": "900",
             "WFWorkflowIcon": [
-                "WFWorkflowIconStartColor": 4_282_601_983,
-                "WFWorkflowIconGlyphNumber": 59511,
+                "WFWorkflowIconStartColor": recipe.icon?.color ?? RecipeIcon.default.color,
+                "WFWorkflowIconGlyphNumber": recipe.icon?.glyph ?? RecipeIcon.default.glyph,
             ],
             "WFWorkflowTypes": [String](),
             "WFWorkflowImportQuestions": [Any](),
@@ -93,6 +93,48 @@ enum RecipeEncoding {
             "WFWorkflowInputContentItemClasses": usesInput ? inputClasses : ["WFStringContentItem"],
             "WFWorkflowActions": actions,
         ]
+        if let message = recipe.noInputError {
+            // Run by hand with nothing, a helper stops and says what it is for,
+            // rather than asking for each of its parameters in turn.
+            workflow["WFWorkflowNoInputBehavior"] = noInputBehavior(message)
+        }
+        return workflow
+    }
+
+    /// The no-input behaviour that stops with `message`.
+    static func noInputBehavior(_ message: String) -> [String: Any] {
+        ["Name": "WFWorkflowNoInputBehaviorShowError", "Parameters": ["Error": message]]
+    }
+
+    /// A dictionary or list parameter, with any string inside it that is
+    /// exactly one variable — `"${name}"`, `"$input"` — made an attachment.
+    ///
+    /// Control flow needs it: an If step's input is
+    /// `{"Type": "Variable", "Variable": <attachment>}`. A string with other
+    /// text in it, or none, is left exactly as written.
+    static func nested(_ value: PlistValue, previous: (uuid: String, name: String)?) -> Any {
+        switch value {
+        case .string(let string):
+            let parts = Tokens.segments(string)
+            guard parts.count == 1, let only = parts.first, !Tokens.isText(only) else { return string }
+            return Tokens.encode(string, isTextParameter: false, previous: previous)
+        case .dictionary(let dictionary):
+            return dictionary.mapValues { nested($0, previous: previous) }
+        case .array(let array):
+            return array.map { nested($0, previous: previous) }
+        default:
+            return PlistValueCoding.object(value)
+        }
+    }
+
+    /// Whether `$input` appears anywhere in a value.
+    static func usesInputAnywhere(_ value: PlistValue) -> Bool {
+        switch value {
+        case .string(let string): return Tokens.segments(string).contains(.input)
+        case .dictionary(let dictionary): return dictionary.values.contains(where: usesInputAnywhere)
+        case .array(let array): return array.contains(where: usesInputAnywhere)
+        default: return false
+        }
     }
 
     /// The workflow as a binary property list, unsigned.

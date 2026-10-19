@@ -1,0 +1,23 @@
+{
+  "id": "mac.display-sleep",
+  "tool": "mac",
+  "title": "Sleep Display",
+  "description": "Puts the display to sleep.",
+  "version": 1,
+  "icon": {
+    "glyph": 59436,
+    "color": "teal"
+  },
+  "input": [],
+  "output": {
+    "type": "none"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.displaysleep"
+    }
+  ],
+  "notes": [],
+  "replaces": [],
+  "install": "mac doctor --install"
+}

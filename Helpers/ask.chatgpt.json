@@ -1,0 +1,133 @@
+{
+  "id": "ask.chatgpt",
+  "tool": "ask",
+  "title": "ChatGPT",
+  "description": "Answers a prompt with Use Model on ChatGPT and hands back the text.",
+  "version": 2,
+  "icon": {
+    "glyph": 61581,
+    "color": "purple"
+  },
+  "input": [
+    {
+      "name": "prompt",
+      "type": "string",
+      "description": "the question"
+    },
+    {
+      "name": "narrow",
+      "type": "bool",
+      "description": "true turns Broad World Knowledge off",
+      "required": false
+    }
+  ],
+  "output": {
+    "type": "text",
+    "description": "the model's answer"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askInput",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "prompt",
+        "WFInput": "${askInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askPrompt",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "narrow",
+        "WFInput": "${askInput}"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "askNarrow",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "332E7A53-32A3-5989-84A1-6209091DD59A",
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": "${askNarrow}"
+        }
+      }
+    },
+    {
+      "action": "is.workflow.actions.askllm",
+      "parameters": {
+        "WFLLMModel": "ChatGPT",
+        "WFLLMPrompt": "${askPrompt}",
+        "WFGenerativeResultType": "Text",
+        "WFAllowWebSearch": false,
+        "FollowUp": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "332E7A53-32A3-5989-84A1-6209091DD59A",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "action": "is.workflow.actions.askllm",
+      "parameters": {
+        "WFLLMModel": "ChatGPT",
+        "WFLLMPrompt": "${askPrompt}",
+        "WFGenerativeResultType": "Text",
+        "WFAllowWebSearch": true,
+        "FollowUp": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.conditional",
+      "parameters": {
+        "GroupingIdentifier": "332E7A53-32A3-5989-84A1-6209091DD59A",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "action": "is.workflow.actions.output",
+      "parameters": {
+        "WFOutput": "$previous",
+        "WFNoOutputSurfaceBehavior": "Do Nothing"
+      }
+    }
+  ],
+  "notes": [
+    "Needs Apple Intelligence and the ChatGPT extension turned on; the request goes to OpenAI.",
+    "Follow Up is always off: on, Use Model opens a chat window and waits."
+  ],
+  "replaces": [],
+  "install": "ask doctor --install",
+  "timeout": 120
+}

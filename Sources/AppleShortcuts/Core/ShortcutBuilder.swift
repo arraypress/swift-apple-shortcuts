@@ -41,7 +41,7 @@ public struct ShortcutBuilder {
     public func build(_ recipe: Recipe, strict: Bool = true) throws -> Data {
         var known: [String: CatalogAction] = [:]
         for id in Set(recipe.actions.map(\.action)) {
-            known[id] = try? catalog.action(id: id)
+            known[id] = (try? catalog.action(id: id)) ?? ControlFlow.actions[id]
         }
         try RecipeValidation.validate(
             recipe,

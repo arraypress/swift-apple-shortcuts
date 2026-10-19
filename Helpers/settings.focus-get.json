@@ -1,0 +1,40 @@
+{
+  "id": "settings.focus-get",
+  "tool": "settings",
+  "title": "Get Focus",
+  "description": "Says which Focus is on, by name; says nothing when none is.",
+  "version": 2,
+  "icon": {
+    "glyph": 61991,
+    "color": "blue"
+  },
+  "input": [],
+  "output": {
+    "type": "text",
+    "description": "the name of the Focus that is on, or nothing"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.dnd.getfocus"
+    },
+    {
+      "action": "is.workflow.actions.detect.text",
+      "parameters": {
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.output",
+      "parameters": {
+        "WFOutput": "$previous",
+        "WFNoOutputSurfaceBehavior": "Do Nothing"
+      }
+    }
+  ],
+  "notes": [
+    "Ends with Stop and Output, nothing shown: run by hand it shows no dialog."
+  ],
+  "replaces": [],
+  "install": "settings doctor --install",
+  "timeout": 30
+}
