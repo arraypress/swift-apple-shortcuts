@@ -24,7 +24,9 @@ enum HelperText {
         case .changed: return "changed since it was added (v\(status.installedVersion ?? 0))"
         case .unmarked: return "a shortcut has its name but was not made by \(status.tool)"
         case .misnamed: return "installed as \"\(status.installedName ?? "?")\""
-        case .duplicated: return "\(status.shortcutIDs.count) shortcuts answer to it"
+        case .duplicated:
+            return status.keeperRuns ? "installed (v\(status.wantedVersion ?? 0)); an old copy is left to delete"
+                                     : "\(status.shortcutIDs.count) shortcuts answer to it"
         case .obsolete: return "no longer used by \(status.tool)"
         case .unclaimed: return "marked as a helper, but no helper file names it"
         }
@@ -64,7 +66,7 @@ enum HelperText {
 public extension HelperStatus {
 
     /// Whether a run would be accepted.
-    var isRunnable: Bool { state == .current }
+    var isRunnable: Bool { state == .current || (state == .duplicated && keeperRuns) }
 
     /// The state in a few words: `out of date (v1 installed, v2 wanted)`.
     var summary: String { HelperText.summary(self) }

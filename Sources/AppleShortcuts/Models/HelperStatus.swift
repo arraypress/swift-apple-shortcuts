@@ -49,10 +49,14 @@ public struct HelperStatus: Sendable, Equatable, Codable {
     /// For a broken helper, what the round-trip lint found.
     public let problems: [String]
 
+    /// For a duplicated helper: the copy to keep is current and clean, so it
+    /// may run, by its identifier (the first of `shortcutIDs`).
+    public let keeperRuns: Bool
+
     /// A status from its parts.
     public init(id: String, name: String, tool: String, state: HelperState, installedVersion: Int? = nil,
                 wantedVersion: Int? = nil, shortcutIDs: [String] = [], installedName: String? = nil,
-                install: String? = nil, runCount: Int = 0, lastRun: Date? = nil, copies: [HelperCopy] = [], problems: [String] = []) {
+                install: String? = nil, runCount: Int = 0, lastRun: Date? = nil, copies: [HelperCopy] = [], problems: [String] = [], keeperRuns: Bool = false) {
         self.id = id
         self.name = name
         self.tool = tool
@@ -66,6 +70,7 @@ public struct HelperStatus: Sendable, Equatable, Codable {
         self.lastRun = lastRun
         self.copies = copies
         self.problems = problems
+        self.keeperRuns = keeperRuns
     }
 }
 

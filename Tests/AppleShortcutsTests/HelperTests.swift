@@ -276,6 +276,15 @@ final class HelperTests: XCTestCase {
         XCTAssertEqual(status.copies.map(\.id), ["REAL", "COPY"])
         XCTAssertEqual(status.copies.map(\.keep), [true, false])
         XCTAssertEqual(status.remedy, "in Shortcuts, delete \"settings · Set Focus 1\" and keep \"settings · Set Focus\"")
+        // The keeper is exactly this helper, current: it runs, by its identifier; the copy never does.
+        XCTAssertTrue(status.isRunnable)
+        XCTAssertEqual(status.shortcutIDs.first, "REAL")
+        let host = FakeHost([copy, real])
+        _ = try? focus.run(["on": .bool(true)], host: host)
+        XCTAssertEqual(host.runs.map(\.name), ["REAL"])
+        // An old keeper does not run.
+        let oldReal = entry("settings · Set Focus", marker: marker(version: 1), id: "OLD")
+        XCTAssertFalse(HelperAssessment.status(of: focus, in: [copy, oldReal]).isRunnable)
         // Two marked copies, neither under the exact name: keep the current one and rename it.
         let a = InstalledShortcut(id: "A", name: "settings · Set Focus 1", marker: marker(version: 1), modified: Date(timeIntervalSince1970: 10))
         let b = InstalledShortcut(id: "B", name: "settings · Set Focus 2", marker: marker(), modified: Date(timeIntervalSince1970: 5))

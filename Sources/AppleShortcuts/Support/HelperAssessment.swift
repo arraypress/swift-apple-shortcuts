@@ -36,7 +36,20 @@ enum HelperAssessment {
         }
 
         if all.isEmpty { return status(.missing) }
-        if all.count > 1 { return status(.duplicated) }
+        if all.count > 1 {
+            // Several answer to it. The copy to keep runs by its identifier, so a
+            // stray old copy is never run — but only when the keeper is itself
+            // exactly this helper, current and clean.
+            let duplicated = status(.duplicated)
+            guard let keep = duplicated.copies.first, let entry = all.first(where: { $0.id == keep.id }),
+                  same(entry.name, helper.name), entry.marker?.version == helper.version,
+                  entry.marker?.recipe == HelperMarking.fingerprint(helper), entry.problems.isEmpty,
+                  helper.input.isEmpty || entry.noInputBehavior == HelperLint.stopsOnNoInput else { return duplicated }
+            return HelperStatus(id: helper.id, name: helper.name, tool: helper.tool, state: .duplicated,
+                                installedVersion: helper.version, wantedVersion: helper.version,
+                                shortcutIDs: [keep.id] + duplicated.shortcutIDs.filter { $0 != keep.id }, install: helper.install,
+                                runCount: entry.runCount, lastRun: entry.lastRun, copies: duplicated.copies, keeperRuns: true)
+        }
         let entry = all[0]
         if helper.version == 0, entry.marker == nil { return status(.current, entry) }
         guard let marker = entry.marker, marked.contains(entry) else { return status(.unmarked, entry) }
