@@ -1036,13 +1036,76 @@ enum HelperCatalogueData {
   "experimental": true
 }
 """#,
-        "rec.voice-memo.json": #"""
+        "memos.new-folder.json": #"""
 {
-  "id": "rec.voice-memo",
-  "tool": "rec",
-  "title": "Voice Memo",
-  "description": "Starts or stops a Voice Memos recording.",
-  "version": 3,
+  "id": "memos.new-folder",
+  "tool": "memos",
+  "title": "New Folder",
+  "description": "Creates a folder in Voice Memos.",
+  "version": 1,
+  "icon": {
+    "glyph": 61586,
+    "color": "orange"
+  },
+  "input": [
+    {
+      "name": "name",
+      "type": "string",
+      "description": "the folder's name"
+    }
+  ],
+  "output": {
+    "type": "none",
+    "description": "memos reads Voice Memos' own database back"
+  },
+  "steps": [
+    {
+      "action": "is.workflow.actions.detect.dictionary",
+      "parameters": {
+        "WFInput": "$input"
+      }
+    },
+    {
+      "action": "is.workflow.actions.getvalueforkey",
+      "parameters": {
+        "WFGetDictionaryValueType": "Value",
+        "WFDictionaryKey": "name",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "is.workflow.actions.setvariable",
+      "parameters": {
+        "WFVariableName": "folderName",
+        "WFInput": "$previous"
+      }
+    },
+    {
+      "action": "com.apple.VoiceMemos.CreateFolder",
+      "parameters": {
+        "name": "${folderName}",
+        "ShowWhenRun": false
+      }
+    },
+    {
+      "action": "is.workflow.actions.nothing"
+    }
+  ],
+  "notes": [
+    "Import Recording, Combine Recordings and the Voice Memo toggle are refused at import on the Mac (catalogue, macOS 27.0.1), so there is no import helper.",
+    "No delete yet: Delete Recordings acts on what Find Recordings matches, so it waits for a decoy test (two throwaway recordings, one deleted, the other untouched)."
+  ],
+  "replaces": [],
+  "install": "memos doctor --install"
+}
+"""#,
+        "memos.record.json": #"""
+{
+  "id": "memos.record",
+  "tool": "memos",
+  "title": "Record",
+  "description": "Starts a Voice Memos recording with a name, or stops the current one.",
+  "version": 1,
   "icon": {
     "glyph": 61586,
     "color": "orange"
@@ -1063,7 +1126,7 @@ enum HelperCatalogueData {
   ],
   "output": {
     "type": "none",
-    "description": "rec reads Voice Memos' own database back"
+    "description": "memos reads Voice Memos' own database back"
   },
   "steps": [
     {
@@ -1162,10 +1225,13 @@ enum HelperCatalogueData {
     }
   ],
   "notes": [
-    "No delete: a Find-by-name filter was ignored at run time in Notes (it acted on every note), so no helper deletes by name until that is measured safe here."
+    "No delete: a Find-by-name filter was ignored at run time in Notes (it acted on every note), so no helper deletes by name until that is measured safe here.",
+    "Moved from rec (rec · Voice Memo, v3, verified live 2026-10-20) to memos, which owns Voice Memos."
   ],
-  "replaces": [],
-  "install": "rec doctor --install"
+  "replaces": [
+    "rec · Voice Memo"
+  ],
+  "install": "memos doctor --install"
 }
 """#,
         "settings.focus-get.json": #"""

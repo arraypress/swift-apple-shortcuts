@@ -49,8 +49,8 @@ public enum HelperPalette {
         "ask": "purple",
         "browse": "light-blue",
         "mac": "teal",
+        "memos": "orange",
         "notes": "yellow",
-        "rec": "orange",
         "settings": "blue",
         "whatsapp": "green",
     ]
