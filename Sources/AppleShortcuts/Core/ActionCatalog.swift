@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import SQLiteReader
 
 /// Shortcuts' index of every action every installed app offers.
 ///
@@ -26,7 +27,7 @@ import Foundation
 /// ```
 public final class ActionCatalog {
 
-    private let database: SQLiteDatabase
+    private let database: SQLiteReader
 
     /// Where the catalogue lives.
     public let path: String
@@ -42,7 +43,7 @@ public final class ActionCatalog {
         let resolved = try path ?? Self.defaultPath()
         self.path = resolved
         self.locale = locale
-        self.database = try SQLiteDatabase(path: resolved)
+        self.database = try SQLiteReader.shortcutsStore(resolved)
     }
 
     /// The newest catalogue file.
@@ -77,7 +78,7 @@ public final class ActionCatalog {
     public func search(_ text: String = "", app: String? = nil, limit: Int = 50) throws -> [CatalogAction] {
         let (sql, values) = CatalogQueries.search(text: text, app: app, locale: locale, limit: limit)
         var found: [CatalogAction] = []
-        try database.query(sql, values) { row in
+        try database.read(sql, values) { row in
             found.append(CatalogQueries.action(from: row))
         }
         return try found.map { try withParameters($0) }
@@ -87,7 +88,7 @@ public final class ActionCatalog {
     public func action(id: String) throws -> CatalogAction {
         let (sql, values) = CatalogQueries.action(id: id, locale: locale)
         var found: CatalogAction?
-        try database.query(sql, values) { row in
+        try database.read(sql, values) { row in
             if found == nil { found = CatalogQueries.action(from: row) }
         }
         guard let found else {
@@ -99,8 +100,8 @@ public final class ActionCatalog {
     /// Every action identifier.
     public func identifiers() throws -> [String] {
         var ids: [String] = []
-        try database.query("select distinct id from Tools order by id") { row in
-            if let id = row.text(0) { ids.append(id) }
+        try database.read("select distinct id from Tools order by id") { row in
+            if let id = row[0].string { ids.append(id) }
         }
         return ids
     }
@@ -108,8 +109,8 @@ public final class ActionCatalog {
     /// The apps that offer actions, with how many each.
     public func apps() throws -> [(app: String, name: String?, actions: Int)] {
         var apps: [(String, String?, Int)] = []
-        try database.query(CatalogQueries.apps, [.text(locale)]) { row in
-            apps.append((row.text(0) ?? "", row.text(1), Int(row.integer(2))))
+        try database.read(CatalogQueries.apps, [.text(locale)]) { row in
+            apps.append((row[0].string ?? "", row[1].string, row[2].int ?? 0))
         }
         return apps
     }
@@ -117,13 +118,13 @@ public final class ActionCatalog {
     /// An action with its parameters filled in.
     private func withParameters(_ action: CatalogAction) throws -> CatalogAction {
         var parameters: [CatalogParameter] = []
-        try database.query(CatalogQueries.parameters, [.text(action.id), .text(action.app), .text(locale)]) { row in
+        try database.read(CatalogQueries.parameters, [.text(action.id), .text(action.app), .text(locale)]) { row in
             parameters.append(CatalogParameter(
-                key: row.text(0) ?? "",
-                name: row.text(1),
-                description: row.text(2),
-                type: row.text(3),
-                choices: (row.text(4) ?? "").split(separator: "\u{1F}").map(String.init)
+                key: row[0].string ?? "",
+                name: row[1].string,
+                description: row[2].string,
+                type: row[3].string,
+                choices: (row[4].string ?? "").split(separator: "\u{1F}").map(String.init)
             ))
         }
         return CatalogAction(

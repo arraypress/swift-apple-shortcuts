@@ -173,7 +173,9 @@ being rejected.
 
 macOS 14+. Reading the library's database and the catalogue needs the
 terminal to be allowed into `~/Library/Shortcuts`; where it is not, the open
-fails as `notPermitted` rather than as a missing file.
+fails as `notPermitted` rather than as a missing file. Both are read in
+place and read-only through
+[swift-sqlite-reader](https://github.com/arraypress/swift-sqlite-reader).
 
 ## Installation
 

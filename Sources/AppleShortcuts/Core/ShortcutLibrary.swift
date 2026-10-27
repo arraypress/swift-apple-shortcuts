@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import SQLiteReader
 
 /// The shortcuts in this Mac's library.
 ///
@@ -94,14 +95,14 @@ public struct ShortcutLibrary: Sendable {
     ///
     /// - Parameter catalog: Names each step's action, when given.
     public func steps(of shortcut: Shortcut, catalog: ActionCatalog? = nil) throws -> [ShortcutStep] {
-        let database = try SQLiteDatabase(path: databasePath)
+        let database = try SQLiteReader.shortcutsStore(databasePath)
         var blob: Data?
-        try database.query("""
+        try database.read("""
             select a.ZDATA from ZSHORTCUTACTIONS a
             join ZSHORTCUT s on a.ZSHORTCUT = s.Z_PK
             where s.ZWORKFLOWID = ? and coalesce(s.ZTOMBSTONED, 0) = 0
             limit 1
-            """, [.text(shortcut.id)]) { row in blob = row.data(0) }
+            """, [.text(shortcut.id)]) { row in blob = row[0].bytes }
 
         guard let blob else { return [] }
         let steps = try StepDecoding.steps(from: blob)
@@ -119,26 +120,26 @@ public struct ShortcutLibrary: Sendable {
     /// The run count and date are Shortcuts' own (`ZRUNEVENTSCOUNT`,
     /// `ZLASTRUNEVENTDATE`), which count runs from the command line too.
     public func installed() throws -> [InstalledShortcut] {
-        let database = try SQLiteDatabase(path: databasePath)
+        let database = try SQLiteReader.shortcutsStore(databasePath)
         var found: [InstalledShortcut] = []
-        try database.query("""
+        try database.read("""
             select s.ZWORKFLOWID, s.ZNAME, s.ZRUNEVENTSCOUNT, s.ZLASTRUNEVENTDATE, s.ZMODIFICATIONDATE,
                    (select a.ZDATA from ZSHORTCUTACTIONS a where a.ZSHORTCUT = s.Z_PK limit 1), s.ZNOINPUTBEHAVIORDATA
             from ZSHORTCUT s
             where coalesce(s.ZTOMBSTONED, 0) = 0 and s.ZWORKFLOWID is not null
             order by s.ZNAME
             """) { row in
-            let steps = row.data(5).flatMap { try? StepDecoding.steps(from: $0) } ?? []
+            let steps = row[5].bytes.flatMap { try? StepDecoding.steps(from: $0) } ?? []
             let marker = HelperMarking.marker(in: steps)
             found.append(InstalledShortcut(
-                id: row.text(0) ?? "",
-                name: row.text(1) ?? "",
+                id: row[0].string ?? "",
+                name: row[1].string ?? "",
                 marker: marker,
-                runCount: Int(row.integer(2)),
-                lastRun: row.double(3).map(Date.init(timeIntervalSinceReferenceDate:)),
-                modified: row.double(4).map(Date.init(timeIntervalSinceReferenceDate:)),
+                runCount: row[2].int ?? 0,
+                lastRun: row[3].double.map(Date.init(timeIntervalSinceReferenceDate:)),
+                modified: row[4].double.map(Date.init(timeIntervalSinceReferenceDate:)),
                 problems: marker == nil ? [] : HelperLint.problems(steps),
-                noInputBehavior: row.data(6).flatMap(HelperLint.noInputBehaviorName)
+                noInputBehavior: row[6].bytes.flatMap(HelperLint.noInputBehaviorName)
             ))
         }
         return found

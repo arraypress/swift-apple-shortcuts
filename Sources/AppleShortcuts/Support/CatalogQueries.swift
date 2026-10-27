@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import SQLiteReader
 
 /// Queries against Shortcuts' ToolKit database.
 ///
@@ -102,16 +103,16 @@ enum CatalogQueries {
         """
 
     /// An action from a row of ``actionColumns``, parameters not yet read.
-    static func action(from row: SQLiteDatabase.Row) -> CatalogAction {
+    static func action(from row: SQLiteRow) -> CatalogAction {
         CatalogAction(
-            id: row.text(0) ?? "",
-            name: row.text(1) ?? row.text(0) ?? "",
-            summary: row.text(2).flatMap { $0.isEmpty ? nil : $0 },
-            app: row.text(3) ?? "",
-            appName: row.text(4),
-            kind: row.text(5) ?? "",
-            outputName: row.text(6).flatMap { $0.isEmpty ? nil : $0 },
-            mac: PlatformRequirements.availability(visibility: Int(row.integer(7)), requirements: row.data(8) ?? Data())
+            id: row[0].string ?? "",
+            name: row[1].string ?? row[0].string ?? "",
+            summary: row[2].string.flatMap { $0.isEmpty ? nil : $0 },
+            app: row[3].string ?? "",
+            appName: row[4].string,
+            kind: row[5].string ?? "",
+            outputName: row[6].string.flatMap { $0.isEmpty ? nil : $0 },
+            mac: PlatformRequirements.availability(visibility: row[7].int ?? 0, requirements: row[8].bytes ?? Data())
         )
     }
 }
