@@ -42,10 +42,3 @@ extension SQLiteReader {
         do { try query(sql, bindings, row: row) } catch { throw ShortcutsError(error) }
     }
 }
-
-extension SQLiteValue {
-
-    /// The value as bytes, nil for NULL and for an empty blob — as SQLite's
-    /// own column reader hands them over.
-    var bytes: Data? { data.flatMap { $0.isEmpty ? nil : $0 } }
-}

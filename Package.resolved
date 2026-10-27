@@ -1,5 +1,5 @@
 {
-  "originHash" : "7b3ea4ab027d5e1ca2190d97e533248b6dcfa2e515fb8dadc61a85f3fc6491ed",
+  "originHash" : "49086d88fa241c75440d3b5b3eece9afb2605e9a384ade9331aa015772480d09",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/arraypress/swift-sqlite-reader.git",
       "state" : {
-        "revision" : "ecccbec440c5de3ae1f1e33c509665451607fe89",
-        "version" : "0.1.0"
+        "revision" : "cb6eec46c4c9dbd89ffa4dcd3ad5b681117c92d7",
+        "version" : "0.2.0"
       }
     }
   ],

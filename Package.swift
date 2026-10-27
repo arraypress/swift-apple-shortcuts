@@ -20,7 +20,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/arraypress/swift-cli-kit.git", from: "0.20.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
-        .package(url: "https://github.com/arraypress/swift-sqlite-reader.git", from: "0.1.0"),
+        .package(url: "https://github.com/arraypress/swift-sqlite-reader.git", from: "0.2.0"),
     ],
     targets: [
         .target(name: "AppleShortcuts", dependencies: [

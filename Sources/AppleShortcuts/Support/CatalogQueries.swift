@@ -112,7 +112,7 @@ enum CatalogQueries {
             appName: row[4].string,
             kind: row[5].string ?? "",
             outputName: row[6].string.flatMap { $0.isEmpty ? nil : $0 },
-            mac: PlatformRequirements.availability(visibility: row[7].int ?? 0, requirements: row[8].bytes ?? Data())
+            mac: PlatformRequirements.availability(visibility: row[7].int ?? 0, requirements: row[8].nonEmptyData ?? Data())
         )
     }
 }

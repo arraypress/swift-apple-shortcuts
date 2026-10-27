@@ -102,7 +102,7 @@ public struct ShortcutLibrary: Sendable {
             join ZSHORTCUT s on a.ZSHORTCUT = s.Z_PK
             where s.ZWORKFLOWID = ? and coalesce(s.ZTOMBSTONED, 0) = 0
             limit 1
-            """, [.text(shortcut.id)]) { row in blob = row[0].bytes }
+            """, [.text(shortcut.id)]) { row in blob = row[0].nonEmptyData }
 
         guard let blob else { return [] }
         let steps = try StepDecoding.steps(from: blob)
@@ -129,7 +129,7 @@ public struct ShortcutLibrary: Sendable {
             where coalesce(s.ZTOMBSTONED, 0) = 0 and s.ZWORKFLOWID is not null
             order by s.ZNAME
             """) { row in
-            let steps = row[5].bytes.flatMap { try? StepDecoding.steps(from: $0) } ?? []
+            let steps = row[5].nonEmptyData.flatMap { try? StepDecoding.steps(from: $0) } ?? []
             let marker = HelperMarking.marker(in: steps)
             found.append(InstalledShortcut(
                 id: row[0].string ?? "",
@@ -139,7 +139,7 @@ public struct ShortcutLibrary: Sendable {
                 lastRun: row[3].double.map(Date.init(timeIntervalSinceReferenceDate:)),
                 modified: row[4].double.map(Date.init(timeIntervalSinceReferenceDate:)),
                 problems: marker == nil ? [] : HelperLint.problems(steps),
-                noInputBehavior: row[6].bytes.flatMap(HelperLint.noInputBehaviorName)
+                noInputBehavior: row[6].nonEmptyData.flatMap(HelperLint.noInputBehaviorName)
             ))
         }
         return found
